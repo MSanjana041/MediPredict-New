@@ -19,7 +19,7 @@ Development will begin in later phases.
 ---
 
 ## Tech Stack (Planned)
-- Frontend: HTML, CSS, JavaScript
+- Frontend: React.js
 - Backend: Node.js / Express (tentative)
 - Database: MongoDB (tentative)
 
