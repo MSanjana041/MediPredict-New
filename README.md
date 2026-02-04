@@ -26,9 +26,7 @@ Development will begin in later phases.
 ---
 
 ## Project Status
-🟡 Repository initialized  
-🟡 Planning phase  
-🔴 Development not started yet
+🟡 Developement started  
 
 ---
 
