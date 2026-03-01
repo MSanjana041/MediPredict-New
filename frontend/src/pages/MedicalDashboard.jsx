@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
     Activity, LogOut, Stethoscope, HeartPulse,
-    ShieldAlert, CheckCircle, PlusCircle, Bot
+    ShieldAlert, CheckCircle, PlusCircle, Bot, Search, X
 } from 'lucide-react';
 import doctorSilhouette from '../assets/silhouettes/doctor-silhouette.png';
 import './MedicalDashboard.css';
@@ -18,6 +18,11 @@ const MedicalDashboard = () => {
     const [error, setError] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+
+    // ── Search state ──
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterType, setFilterType] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
     const [formData, setFormData] = useState({
         playerId: '',
         injuryType: '',
@@ -71,8 +76,10 @@ const MedicalDashboard = () => {
     const handleLogout = () => { localStorage.removeItem('user'); navigate('/login'); };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+        // Parse number fields so they are stored as numbers, not strings
+        const parsed = type === 'range' || type === 'number' ? Number(value) : value;
+        setFormData(prev => ({ ...prev, [name]: parsed }));
     };
 
     const handleAddInjury = async (e) => {
@@ -153,6 +160,14 @@ const MedicalDashboard = () => {
         });
     };
 
+    /* ── Filtered injuries (client-side, instant) ── */
+    const filteredInjuries = injuries.filter(inj => {
+        const nameMatch = !searchQuery || inj.playerId?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+        const typeMatch = !filterType || inj.injuryType === filterType;
+        const statusMatch = !filterStatus || inj.status === filterStatus;
+        return nameMatch && typeMatch && statusMatch;
+    });
+
     /* ── badge helpers ── */
     const severityClass = (s) =>
         s === 'Minor' ? 'md-badge md-badge-green' :
@@ -173,9 +188,18 @@ const MedicalDashboard = () => {
         );
     }
 
-    /* ── Shared injury form fields ── */
-    const InjuryForm = ({ onSubmit, submitLabel }) => (
-        <form onSubmit={onSubmit}>
+    /* ── Form JSX as a variable (NOT a nested component — avoids remount focus bug) ── */
+    const activeSubmit = showAddModal ? handleAddInjury : handleUpdateInjury;
+    const activeLabel = showAddModal ? 'Add Injury' : 'Update Injury';
+    const closeModal = () => {
+        setShowAddModal(false);
+        setShowEditModal(false);
+        setSelectedInjury(null);
+        resetForm();
+    };
+
+    const injuryFormJSX = (
+        <form onSubmit={activeSubmit}>
 
             {/* 1. SELECT — Player */}
             <div className="md-form-group">
@@ -316,7 +340,7 @@ const MedicalDashboard = () => {
                             type="checkbox"
                             name="clearedForTraining"
                             checked={formData.clearedForTraining}
-                            onChange={(e) => setFormData({ ...formData, clearedForTraining: e.target.checked })}
+                            onChange={(e) => setFormData(prev => ({ ...prev, clearedForTraining: e.target.checked }))}
                             className="md-checkbox"
                         />
                         <span>Player is cleared to return to training</span>
@@ -333,11 +357,10 @@ const MedicalDashboard = () => {
             </div>
 
             <div className="md-modal-actions">
-                <button type="button" className="md-btn-cancel"
-                    onClick={() => { setShowAddModal(false); setShowEditModal(false); setSelectedInjury(null); resetForm(); }}>
+                <button type="button" className="md-btn-cancel" onClick={closeModal}>
                     Cancel
                 </button>
-                <button type="submit" className="md-btn-submit">{submitLabel}</button>
+                <button type="submit" className="md-btn-submit">{activeLabel}</button>
             </div>
         </form>
     );
@@ -418,7 +441,65 @@ const MedicalDashboard = () => {
                 </div>
 
                 {/* ── Injury Records Table ── */}
-                <h3 className="md-section-title">Injury Records</h3>
+                <div className="md-table-header">
+                    <h3 className="md-section-title">Injury Records</h3>
+                    <div className="md-search-bar">
+                        {/* Text search — player name */}
+                        <div className="md-search-input-wrap">
+                            <Search size={15} className="md-search-icon" />
+                            <input
+                                type="text"
+                                className="md-search-input"
+                                placeholder="Search player name…"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <button className="md-search-clear" onClick={() => setSearchQuery('')}>
+                                    <X size={13} />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Dropdown — injury type */}
+                        <select
+                            className="md-search-select"
+                            value={filterType}
+                            onChange={e => setFilterType(e.target.value)}
+                        >
+                            <option value="">All Types</option>
+                            {['Muscle Strain', 'Ligament Sprain', 'Fracture', 'Concussion',
+                                'Tendinitis', 'Dislocation', 'Contusion', 'Other'].map(t => (
+                                    <option key={t} value={t}>{t}</option>
+                                ))}
+                        </select>
+
+                        {/* Dropdown — status */}
+                        <select
+                            className="md-search-select"
+                            value={filterStatus}
+                            onChange={e => setFilterStatus(e.target.value)}
+                        >
+                            <option value="">All Statuses</option>
+                            {['Active', 'Recovering', 'Healed'].map(s => (
+                                <option key={s} value={s}>{s}</option>
+                            ))}
+                        </select>
+
+                        {/* Result count + clear all */}
+                        <span className="md-search-count">
+                            {filteredInjuries.length} of {injuries.length}
+                        </span>
+                        {(searchQuery || filterType || filterStatus) && (
+                            <button className="md-btn-clear-filters" onClick={() => {
+                                setSearchQuery(''); setFilterType(''); setFilterStatus('');
+                            }}>
+                                Clear
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 <div className="md-card">
                     <table className="md-table">
                         <thead>
@@ -428,7 +509,6 @@ const MedicalDashboard = () => {
                                 <th>Date</th>
                                 <th>Body Part</th>
                                 <th>Severity</th>
-                                <th>Pain</th>
                                 <th>Status</th>
                                 <th>Cleared</th>
                                 <th>Recovery Days</th>
@@ -436,27 +516,19 @@ const MedicalDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {injuries.length === 0 ? (
+                            {filteredInjuries.length === 0 ? (
                                 <tr>
-                                    <td colSpan="10" style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--muted-fg)' }}>
-                                        No injury records found.
+                                    <td colSpan="9" style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--muted-fg)' }}>
+                                        {injuries.length === 0 ? 'No injury records found.' : 'No records match your search.'}
                                     </td>
                                 </tr>
-                            ) : injuries.map(injury => (
+                            ) : filteredInjuries.map(injury => (
                                 <tr key={injury._id}>
                                     <td>{injury.playerId?.name}</td>
                                     <td>{injury.injuryType}</td>
                                     <td>{injury.dateOfInjury ? new Date(injury.dateOfInjury).toLocaleDateString() : '—'}</td>
                                     <td>{injury.bodyPart}</td>
                                     <td><span className={severityClass(injury.severity)}>{injury.severity}</span></td>
-                                    <td>
-                                        <span className="md-pain-pill" data-level={
-                                            injury.painLevel >= 8 ? 'high' :
-                                                injury.painLevel >= 5 ? 'mid' : 'low'
-                                        }>
-                                            {injury.painLevel ?? '—'}/10
-                                        </span>
-                                    </td>
                                     <td><span className={statusClass(injury.status)}>{injury.status}</span></td>
                                     <td>
                                         <span className={injury.clearedForTraining ? 'md-badge md-badge-green' : 'md-badge md-badge-red'}>
@@ -482,7 +554,7 @@ const MedicalDashboard = () => {
                 <div className="md-modal-overlay">
                     <div className="md-modal">
                         <h2 className="md-modal-title">Add New Injury Record</h2>
-                        <InjuryForm onSubmit={handleAddInjury} submitLabel="Add Injury" />
+                        {injuryFormJSX}
                     </div>
                 </div>
             )}
@@ -492,7 +564,7 @@ const MedicalDashboard = () => {
                 <div className="md-modal-overlay">
                     <div className="md-modal">
                         <h2 className="md-modal-title">Edit Injury Record</h2>
-                        <InjuryForm onSubmit={handleUpdateInjury} submitLabel="Update Injury" />
+                        {injuryFormJSX}
                     </div>
                 </div>
             )}

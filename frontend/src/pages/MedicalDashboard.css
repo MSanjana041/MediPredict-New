@@ -304,6 +304,128 @@
 }
 
 /* ============================================
+   SEARCH TOOLBAR
+   ============================================ */
+.md-table-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.md-table-header .md-section-title {
+    margin: 0;
+}
+
+.md-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+/* Text input wrapper */
+.md-search-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.md-search-icon {
+    position: absolute;
+    left: 0.7rem;
+    color: var(--muted-fg);
+    pointer-events: none;
+}
+
+.md-search-input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 2.1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    width: 200px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.md-search-input::placeholder {
+    color: var(--muted-fg);
+}
+
+.md-search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px hsla(160, 84%, 39%, 0.1);
+}
+
+.md-search-clear {
+    position: absolute;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--muted-fg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.15rem;
+    border-radius: 3px;
+    transition: color 0.15s;
+}
+
+.md-search-clear:hover {
+    color: hsl(0, 90%, 70%);
+}
+
+/* Filter dropdowns */
+.md-search-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.md-search-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px hsla(160, 84%, 39%, 0.1);
+}
+
+/* Result count */
+.md-search-count {
+    font-size: 0.8rem;
+    color: var(--muted-fg);
+    white-space: nowrap;
+}
+
+/* Clear all button */
+.md-btn-clear-filters {
+    padding: 0.45rem 0.85rem;
+    background: transparent;
+    color: hsl(0, 90%, 70%);
+    border: 1px solid hsla(0, 72%, 51%, 0.35);
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.md-btn-clear-filters:hover {
+    background: hsla(0, 72%, 51%, 0.1);
+    border-color: hsl(0, 72%, 51%);
+}
+
+/* ============================================
    TABLE CARD
    ============================================ */
 .md-card {
