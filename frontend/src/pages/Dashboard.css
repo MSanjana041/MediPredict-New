@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ============================================
+   CSS VARIABLES — matches MainPage.css exactly
+   ============================================ */
+:root {
+    --background:        hsl(220, 20%, 7%);
+    --foreground:        hsl(210, 20%, 92%);
+    --card:              hsl(220, 18%, 10%);
+    --card-foreground:   hsl(210, 20%, 92%);
+    --primary:           hsl(160, 84%, 39%);
+    --primary-fg:        hsl(220, 20%, 7%);
+    --secondary:         hsl(220, 16%, 14%);
+    --muted:             hsl(220, 14%, 16%);
+    --muted-fg:          hsl(215, 15%, 55%);
+    --accent:            hsl(174, 62%, 47%);
+    --border:            hsl(220, 14%, 18%);
+    --surface:           hsl(220, 16%, 12%);
+    --radius:            0.75rem;
+}
+
+/* ============================================
+   PAGE SHELL
+   ============================================ */
+.db-page {
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.db-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: hsla(220, 16%, 12%, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}
+
+.db-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.db-brand-icon { color: var(--primary); }
+
+.db-brand-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.db-brand-highlight { color: var(--primary); }
+
+.db-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.db-nav-welcome {
+    font-size: 0.9rem;
+    color: var(--muted-fg);
+}
+
+.db-nav-welcome strong {
+    color: var(--foreground);
+    font-weight: 600;
+}
+
+.db-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--muted-fg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.db-logout-btn:hover {
+    border-color: hsla(0, 70%, 55%, 0.5);
+    color: hsl(0, 90%, 70%);
+    background: hsla(0, 70%, 50%, 0.08);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+.db-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+.db-header-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.db-section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin: 0 0 0.4rem 0;
+}
+
+.db-page-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0;
+}
+
+/* Role badge variants */
+.db-role-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.badge-player  { background: hsla(160, 84%, 39%, 0.12); color: var(--primary);       border: 1px solid hsla(160, 84%, 39%, 0.3); }
+.badge-coach   { background: hsla(217, 91%, 60%, 0.12); color: hsl(217, 91%, 70%);   border: 1px solid hsla(217, 91%, 60%, 0.3); }
+.badge-medical { background: hsla(280, 70%, 60%, 0.12); color: hsl(280, 70%, 75%);   border: 1px solid hsla(280, 70%, 60%, 0.3); }
+.badge-admin   { background: hsla(38, 92%, 50%, 0.12);  color: hsl(38, 92%, 65%);    border: 1px solid hsla(38, 92%, 50%, 0.3);  }
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+.db-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.db-stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.db-stat-card:hover {
+    border-color: hsla(160, 84%, 39%, 0.3);
+    box-shadow: 0 4px 20px -8px hsla(160, 84%, 39%, 0.15);
+}
+
+.db-stat-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: hsla(160, 84%, 39%, 0.1);
+    border: 1px solid hsla(160, 84%, 39%, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.db-stat-label {
+    font-size: 0.75rem;
+    color: var(--muted-fg);
+    margin: 0 0 0.25rem 0;
+    font-weight: 500;
+}
+
+.db-stat-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 0;
+}
+
+.db-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: block;
+}
+
+/* ============================================
+   INFO BANNER
+   ============================================ */
+.db-info-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.db-info-msg {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.25rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.db-info-player  { background: hsla(160, 84%, 39%, 0.08); border: 1px solid hsla(160, 84%, 39%, 0.2); color: var(--primary); }
+.db-info-admin   { background: hsla(38, 92%, 50%, 0.08);  border: 1px solid hsla(38, 92%, 50%, 0.2);  color: hsl(38, 92%, 65%); }
+.db-info-coach   { background: hsla(217, 91%, 60%, 0.08); border: 1px solid hsla(217, 91%, 60%, 0.2); color: hsl(217, 91%, 70%); }
+.db-info-medical { background: hsla(280, 70%, 60%, 0.08); border: 1px solid hsla(280, 70%, 60%, 0.2); color: hsl(280, 70%, 75%); }
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+.db-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* ============================================
+   QUICK ACCESS CARDS
+   ============================================ */
+.db-quick-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.db-quick-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.db-quick-card:hover {
+    border-color: hsla(160, 84%, 39%, 0.4);
+    background: hsla(160, 84%, 39%, 0.05);
+    transform: translateX(4px);
+}
+
+.db-quick-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    background: hsla(160, 84%, 39%, 0.1);
+    border: 1px solid hsla(160, 84%, 39%, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.db-quick-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.db-quick-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.db-quick-desc {
+    font-size: 0.8rem;
+    color: var(--muted-fg);
+}
+
+.db-quick-arrow {
+    color: var(--muted-fg);
+    transition: transform 0.2s;
+}
+
+.db-quick-card:hover .db-quick-arrow {
+    transform: translateX(3px);
+    color: var(--primary);
+}
+
+/* ============================================
+   TOKEN CARD
+   ============================================ */
+.db-token-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+}
+
+.db-token-label {
+    font-size: 0.8rem;
+    color: var(--muted-fg);
+    margin: 0 0 0.6rem 0;
+    font-weight: 500;
+}
+
+.db-token-value {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--primary);
+    background: hsla(160, 84%, 39%, 0.06);
+    border: 1px solid hsla(160, 84%, 39%, 0.15);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Courier New', Courier, monospace;
+    word-break: break-all;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.db-loading {
+    min-height: 100vh;
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--muted-fg);
+    font-family: 'Inter', sans-serif;
+}
+
+.db-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: db-spin 0.9s linear infinite;
+}
+
+@keyframes db-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .db-main { padding: 1.5rem 1rem; }
+    .db-stats-grid { grid-template-columns: 1fr; }
+    .db-header-section { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .db-nav { padding: 1rem; }
+    .db-nav-welcome { display: none; }
+}
