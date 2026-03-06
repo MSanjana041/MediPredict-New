@@ -6,37 +6,64 @@ const PredictionsPage = () => {
     const [predictions, setPredictions] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Dynamic dropdown state
+    const [players, setPlayers] = useState([]);
+    const [injuries, setInjuries] = useState([]);
+
+    // Gemini loading state
+    const [generating, setGenerating] = useState(false);
+
     // Search state
     const [searchTerm, setSearchTerm] = useState('');
 
     const [formData, setFormData] = useState({
         player: '60d5ecb8b392d700153efabc', // Default dummy ObjectIds for testing
-        injury: '60d5ecb8b392d700153efabd',
-        predictedDays: 0,
-        confidenceScore: 80,
-        recoveryRangeMin: 0,
-        recoveryRangeMax: 0,
-        predictionDate: new Date().toISOString().split('T')[0],
-        status: 'Pending'
+        injury: '60d5ecb8b392d700153efabd'
     });
 
     const [editId, setEditId] = useState(null);
 
-    // For demonstration, some dummy IDs for the dropdowns
-    const MOCK_PLAYERS = [
-        { id: '60d5ecb8b392d700153efabc', name: 'John Doe (P-001)' },
-        { id: '60d5ecb8b392d700153efabe', name: 'Jane Smith (P-002)' },
-        { id: '60d5ecb8b392d700153efabf', name: 'Mike Johnson (P-003)' },
-        { id: '60d5ecb8b392d700153efab1', name: 'Sarah Williams (P-004)' }
-    ];
-
-    const MOCK_INJURIES = [
-        { id: '60d5ecb8b392d700153efabd', name: 'ACL Tear' },
-        { id: '60d5ecb8b392d700153efab6', name: 'Hamstring Strain' },
-        { id: '60d5ecb8b392d700153efab7', name: 'Ankle Sprain' }
-    ];
+    // Helper to get auth config from localStorage
+    const getAuthConfig = () => {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) return {};
+        const userData = JSON.parse(storedUser);
+        return { headers: { Authorization: `Bearer ${userData.token}` } };
+    };
 
     // Fetch all predictions
+    const fetchPlayers = async () => {
+        try {
+            const config = getAuthConfig();
+            // Uses the medical route to easily fetch all users with the "Player" role
+            const res = await axios.get(`http://localhost:5000/api/medical/players`, config);
+            setPlayers(res.data);
+
+            // Default select the first player if no form data is set
+            if (res.data.length > 0 && formData.player === '60d5ecb8b392d700153efabc') {
+                setFormData(prev => ({ ...prev, player: res.data[0]._id }));
+            }
+        } catch (err) {
+            console.error('Error fetching players:', err);
+        }
+    };
+
+    const fetchInjuries = async () => {
+        try {
+            const config = getAuthConfig();
+            // Fetch the global injuries list
+            const res = await axios.get(`http://localhost:5000/api/medical/injuries`, config);
+            setInjuries(res.data);
+
+            // Default select the first injury
+            if (res.data.length > 0 && formData.injury === '60d5ecb8b392d700153efabd') {
+                setFormData(prev => ({ ...prev, injury: res.data[0]._id }));
+            }
+        } catch (err) {
+            console.error('Error fetching injuries:', err);
+        }
+    };
+
     const fetchPredictions = async () => {
         try {
             setLoading(true);
@@ -52,6 +79,13 @@ const PredictionsPage = () => {
         }
     };
 
+    // Load data exactly once when the component initially mounts
+    useEffect(() => {
+        fetchPlayers();
+        fetchInjuries();
+    }, []);
+
+    // Load predictions separately when the search term changes
     useEffect(() => {
         fetchPredictions();
     }, [searchTerm]);
@@ -64,9 +98,6 @@ const PredictionsPage = () => {
         }));
     };
 
-    const handleSliderChange = (e) => {
-        setFormData(prev => ({ ...prev, confidenceScore: e.target.value }));
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -75,38 +106,32 @@ const PredictionsPage = () => {
                 if (!window.confirm('Are you sure you want to update this prediction record?')) return;
                 await axios.put(`http://localhost:5000/api/predictions/${editId}`, formData);
             } else {
-                if (!window.confirm('Are you sure you want to save this new prediction?')) return;
-                await axios.post(`http://localhost:5000/api/predictions`, formData);
+                if (!window.confirm('Generate an AI prediction for this player and injury?')) return;
+                setGenerating(true);
+                await axios.post(`http://localhost:5000/api/predictions`, {
+                    player: formData.player,
+                    injury: formData.injury
+                });
             }
             setFormData({
-                player: MOCK_PLAYERS[0].id,
-                injury: MOCK_INJURIES[0].id,
-                predictedDays: 0,
-                confidenceScore: 80,
-                recoveryRangeMin: 0,
-                recoveryRangeMax: 0,
-                predictionDate: new Date().toISOString().split('T')[0],
-                status: 'Pending'
+                player: players[0]?._id || '',
+                injury: injuries[0]?._id || ''
             });
             setEditId(null);
             fetchPredictions();
         } catch (err) {
             console.error('Error saving prediction', err);
-            alert(err.response?.data?.message || err.message || 'Failed to save prediction record.');
+            alert(err.response?.data?.message || err.message || 'Failed to generate AI prediction.');
+        } finally {
+            setGenerating(false);
         }
     };
 
     const handleEdit = (pred) => {
         setEditId(pred._id);
         setFormData({
-            player: pred.player?._id || pred.player || MOCK_PLAYERS[0].id,
-            injury: pred.injury?._id || pred.injury || MOCK_INJURIES[0].id,
-            predictedDays: pred.predictedDays,
-            confidenceScore: pred.confidenceScore,
-            recoveryRangeMin: pred.recoveryRangeMin,
-            recoveryRangeMax: pred.recoveryRangeMax,
-            predictionDate: new Date(pred.predictionDate).toISOString().split('T')[0],
-            status: pred.status
+            player: pred.player?._id || pred.player || players[0]?._id || '',
+            injury: pred.injury?._id || pred.injury || injuries[0]?._id || ''
         });
     };
 
@@ -124,14 +149,8 @@ const PredictionsPage = () => {
     const cancelEdit = () => {
         setEditId(null);
         setFormData({
-            player: MOCK_PLAYERS[0].id,
-            injury: MOCK_INJURIES[0].id,
-            predictedDays: 0,
-            confidenceScore: 80,
-            recoveryRangeMin: 0,
-            recoveryRangeMax: 0,
-            predictionDate: new Date().toISOString().split('T')[0],
-            status: 'Pending'
+            player: players[0]?._id || '',
+            injury: injuries[0]?._id || ''
         });
     };
 
@@ -202,8 +221,8 @@ const PredictionsPage = () => {
                             <div>
                                 <label style={labelStyle}>Select Player</label>
                                 <select name="player" value={formData.player} onChange={handleInputChange} required style={inputStyle}>
-                                    {MOCK_PLAYERS.map(p => (
-                                        <option key={p.id} value={p.id}>{p.name}</option>
+                                    {players.map(p => (
+                                        <option key={p._id} value={p._id}>{p.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -212,73 +231,31 @@ const PredictionsPage = () => {
                             <div>
                                 <label style={labelStyle}>Injury Category</label>
                                 <select name="injury" value={formData.injury} onChange={handleInputChange} required style={inputStyle}>
-                                    {MOCK_INJURIES.map(i => (
-                                        <option key={i.id} value={i.id}>{i.name}</option>
+                                    {injuries.map(i => (
+                                        <option key={i._id} value={i._id}>{i.injuryType} - {i.bodyPart} ({i.severity})</option>
                                     ))}
-                                </select>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                {/* Control 3: Predicted Recovery Days (Number) */}
-                                <div style={{ flex: 1 }}>
-                                    <label style={labelStyle}>Predicted Days</label>
-                                    <input type="number" name="predictedDays" value={formData.predictedDays} onChange={handleInputChange} min="0" required style={inputStyle} />
-                                </div>
-
-                                {/* Control 4: Confidence Score (Slider) */}
-                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                    <label style={labelStyle}>
-                                        Confidence: <span style={{ color: theme.primary, fontWeight: 'bold' }}>{formData.confidenceScore}%</span>
-                                    </label>
-                                    <input type="range" name="confidenceScore" value={formData.confidenceScore} onChange={handleSliderChange} min="0" max="100" style={{ accentColor: theme.primary, marginTop: '0.4rem' }} />
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                {/* Control 5 & 6: Recovery Range Min & Max (Number) */}
-                                <div style={{ flex: 1 }}>
-                                    <label style={labelStyle}>Est. Min Days</label>
-                                    <input type="number" name="recoveryRangeMin" value={formData.recoveryRangeMin} onChange={handleInputChange} min="0" required style={inputStyle} />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    <label style={labelStyle}>Est. Max Days</label>
-                                    <input type="number" name="recoveryRangeMax" value={formData.recoveryRangeMax} onChange={handleInputChange} min="0" required style={inputStyle} />
-                                </div>
-                            </div>
-
-                            {/* Control 7: Prediction Date (Date Picker) */}
-                            <div>
-                                <label style={labelStyle}>Date of Prediction</label>
-                                <input type="date" name="predictionDate" value={formData.predictionDate} onChange={handleInputChange} required style={inputStyle} />
-                            </div>
-
-                            {/* Control 8: Status (Dropdown) */}
-                            <div>
-                                <label style={labelStyle}>Verification Outcome</label>
-                                <select name="status" value={formData.status} onChange={handleInputChange} style={inputStyle}>
-                                    <option value="Pending">Pending Validation</option>
-                                    <option value="Accurate">Accurate</option>
-                                    <option value="Inaccurate">Inaccurate</option>
                                 </select>
                             </div>
 
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                                 <button
                                     type="submit"
+                                    disabled={generating}
                                     style={{
                                         flex: 1, padding: '0.875rem',
                                         background: theme.primary, color: '#000',
                                         borderRadius: '8px', border: 'none',
                                         fontWeight: 'bold', fontSize: '1rem',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        cursor: 'pointer', transition: 'all 0.2s',
-                                        boxShadow: `0 4px 15px rgba(12, 232, 141, 0.2)`
+                                        cursor: generating ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
+                                        boxShadow: `0 4px 15px rgba(12, 232, 141, 0.2)`,
+                                        opacity: generating ? 0.6 : 1
                                     }}
-                                    onMouseOver={(e) => e.target.style.background = theme.primaryHover}
-                                    onMouseOut={(e) => e.target.style.background = theme.primary}
+                                    onMouseOver={(e) => !generating && (e.target.style.background = theme.primaryHover)}
+                                    onMouseOut={(e) => !generating && (e.target.style.background = theme.primary)}
                                 >
                                     <Save size={18} style={{ marginRight: '0.5rem' }} />
-                                    {editId ? 'Update Record' : 'Save Prediction'}
+                                    {generating ? 'Generating AI Prediction...' : editId ? 'Update Record' : 'Generate Prediction'}
                                 </button>
 
                                 {editId && (
@@ -348,10 +325,10 @@ const PredictionsPage = () => {
                                             <tr key={pred._id} style={{ borderBottom: `1px solid ${theme.border}`, transition: 'background 0.2s' }}>
                                                 <td style={{ padding: '1rem 0.5rem' }}>
                                                     <div style={{ fontWeight: '600', color: theme.textMain }}>
-                                                        {MOCK_PLAYERS.find(p => p.id === String(pred.player?._id || pred.player))?.name || (pred.player ? String(pred.player?._id || pred.player).slice(-6) : 'Unknown Player')}
+                                                        {players.find(p => p._id === String(pred.player?._id || pred.player))?.name || (pred.player ? String(pred.player?._id || pred.player).slice(-6) : 'Unknown Player')}
                                                     </div>
                                                     <div style={{ fontSize: '0.8rem', color: theme.textMuted, marginTop: '0.2rem' }}>
-                                                        {MOCK_INJURIES.find(i => i.id === String(pred.injury?._id || pred.injury))?.name || (pred.injury ? String(pred.injury?._id || pred.injury).slice(-6) : 'Unknown Injury')}
+                                                        {(() => { const inj = injuries.find(i => i._id === String(pred.injury?._id || pred.injury)); return inj ? `${inj.injuryType} - ${inj.bodyPart}` : (pred.injury ? String(pred.injury?._id || pred.injury).slice(-6) : 'Unknown Injury'); })()}
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1rem 0.5rem', color: theme.textMain }}>
