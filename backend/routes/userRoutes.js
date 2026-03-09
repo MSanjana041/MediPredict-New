@@ -2,12 +2,16 @@ const express = require('express');
 const router = express.Router();
 const {
     getUsers,
+    getCoaches,
     getUserById,
     updateUser,
     deleteUser,
     assignRole
 } = require('../controllers/userController');
 const { protect, restrictTo } = require('../middleware/authMiddleware');
+
+router.route('/coaches')
+    .get(getCoaches);
 
 router.route('/')
     .get(protect, restrictTo('Admin', 'Coach'), getUsers);
