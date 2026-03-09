@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema({
     },
     position: {
         type: String
+    },
+    coachId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {
     timestamps: true

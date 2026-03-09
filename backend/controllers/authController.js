@@ -10,7 +10,7 @@ const generateToken = require('../utils/generateToken');
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, roleName } = req.body; // Accept roleName optionally, default to Player
+        const { name, email, password, roleName, coachId } = req.body; // Accept roleName optionally, default to Player
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: 'Please add all fields' });
@@ -32,12 +32,18 @@ const registerUser = async (req, res) => {
         }
 
         // Create user
-        const user = await User.create({
+        const userData = {
             name,
             email,
             password,
             roles: [roleDoc._id]
-        });
+        };
+
+        if (roleToAssignName === 'Player' && coachId) {
+            userData.coachId = coachId;
+        }
+
+        const user = await User.create(userData);
 
         if (user) {
             // Populate roles for response

@@ -31,15 +31,38 @@ const createTrainingLoad = async (req, res) => {
 
 // @desc    Get all training loads (with optional date range and player filter)
 // @route   GET /api/training-load
-// @access  Private
+// @access  Private (Coach/Admin/Player)
 const getTrainingLoads = async (req, res) => {
     try {
         const { startDate, endDate, player } = req.query;
         let query = {};
 
-        // Filter by player if provided
-        if (player) {
-            query.player = player;
+        const User = require('../models/User');
+
+        // RBAC logic to restrict accessible players
+        const userRoles = req.user.roles.map(r => r.name);
+
+        if (userRoles.includes('Admin')) {
+            // Admin can see all, let query be open or filter by specifically requested player
+            if (player) query.player = player;
+        } else if (userRoles.includes('Coach')) {
+            // Coach sees only players under them
+            const assignedPlayers = await User.find({ coachId: req.user._id });
+            const assignedIds = assignedPlayers.map(p => p._id.toString());
+
+            if (player) {
+                // If a specific player is requested, confirm they map to this coach
+                if (assignedIds.includes(player)) {
+                    query.player = player;
+                } else {
+                    return res.status(403).json({ message: 'Not authorized to view this player' });
+                }
+            } else {
+                query.player = { $in: assignedIds };
+            }
+        } else {
+            // Player sees only their own loads
+            query.player = req.user._id;
         }
 
         // Filter by date range if provided
