@@ -233,13 +233,13 @@ const Dashboard = () => {
                                     <p className="db-stat-value">{user.name}</p>
                                 </div>
                             </div>
-                            <div className="db-stat-card db-stat-card-wide">
+                            <div className="db-stat-card">
                                 <div className="db-stat-icon-wrap">
                                     <Mail size={20} />
                                 </div>
                                 <div>
                                     <p className="db-stat-label">Email</p>
-                                    <p className="db-stat-value">{user.email}</p>
+                                    <p className="db-stat-value db-email-value">{user.email}</p>
                                 </div>
                             </div>
                             {/* Show profile data if exists */}
