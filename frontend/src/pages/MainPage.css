@@ -52,6 +52,10 @@
     border-color: var(--border);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--background);
@@ -223,10 +227,26 @@ h6 {
    ============================================ */
 .hero-section {
     padding: 140px 2rem 80px;
-    background: var(--background);
+    background: linear-gradient(270deg, var(--background), hsl(220, 25%, 10%), var(--background));
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
     min-height: 100vh;
     display: flex;
     align-items: center;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .hero-container {
@@ -282,6 +302,16 @@ h6 {
     margin-bottom: 1.5rem;
     color: var(--foreground);
     font-family: 'Space Grotesk', sans-serif;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .title-highlight {
@@ -322,8 +352,9 @@ h6 {
 
 .btn-primary:hover {
     background: hsl(160, 84%, 35%);
-    transform: translateY(-2px);
-    box-shadow: 0 0 30px -5px hsla(160, 84%, 39%, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px hsla(160, 84%, 39%, 0.3);
+    transition: all 0.3s ease;
 }
 
 .btn-secondary {
@@ -344,6 +375,8 @@ h6 {
 .btn-secondary:hover {
     border-color: var(--primary);
     background: hsla(160, 84%, 39%, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px hsla(160, 84%, 39%, 0.15);
 }
 
 .hero-stats {
@@ -439,9 +472,9 @@ h6 {
 }
 
 .feature-card:hover {
-    border-color: hsla(160, 84%, 39%, 0.35);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px -10px hsla(160, 84%, 39%, 0.15);
+    border-color: var(--primary);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
 .feature-icon-wrapper {
@@ -619,9 +652,9 @@ h6 {
 }
 
 .role-card:hover {
-    border-color: hsla(160, 84%, 39%, 0.35);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 30px -10px hsla(160, 84%, 39%, 0.15);
+    border-color: var(--primary);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
 .role-icon-wrapper {
@@ -953,4 +986,316 @@ h6 {
         gap: 0.5rem;
         text-align: center;
     }
+}
+
+/* ============================================
+   LEARN MORE MODAL
+   ============================================ */
+.learn-more-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: hsla(220, 20%, 5%, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.learn-more-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.learn-more-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 10;
+}
+
+.learn-more-close:hover {
+    color: var(--foreground);
+}
+
+.learn-more-header {
+    padding: 3rem 2.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: hsla(160, 84%, 39%, 0.03);
+}
+
+.learn-more-icon {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.learn-more-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.learn-more-header p {
+    color: var(--muted-foreground);
+    font-size: 1.1rem;
+}
+
+.learn-more-content {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.articles-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.article-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+    background: hsla(220, 16%, 12%, 0.5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.article-card:last-child {
+    margin-bottom: 0;
+}
+
+.article-card:hover {
+    border-color: hsla(160, 84%, 39%, 0.4);
+    background: hsla(160, 84%, 39%, 0.05);
+    transform: translateY(-2px);
+}
+
+.article-info h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.article-info p {
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.article-source {
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    background: hsla(160, 84%, 39%, 0.1);
+    border-radius: 50px;
+}
+
+.article-link-icon {
+    color: var(--muted-foreground);
+    transition: color 0.2s;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.article-card:hover .article-link-icon {
+    color: var(--primary);
+}
+
+.learn-more-footer {
+    padding: 2rem 2.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    background: hsla(220, 16%, 12%, 0.3);
+}
+
+@media (max-width: 768px) {
+    .learn-more-overlay {
+        padding: 1rem;
+    }
+
+    .learn-more-header {
+        padding: 2.5rem 1.5rem 1.5rem;
+    }
+
+    .learn-more-content {
+        padding: 1.5rem;
+    }
+
+    .article-card {
+        padding: 1rem;
+    }
+}
+
+.nav-links a.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.2rem;
+}
+
+/* ============================================
+   GLOBAL SCROLL & SUBTLE ANIMATIONS
+   ============================================ */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animate-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.stagger-delay-1 {
+    transition-delay: 0.1s;
+}
+
+.stagger-delay-2 {
+    transition-delay: 0.2s;
+}
+
+.stagger-delay-3 {
+    transition-delay: 0.3s;
+}
+
+.stagger-delay-4 {
+    transition-delay: 0.4s;
+}
+
+.pulse-icon svg {
+    animation: subtlePulse 3s infinite;
+}
+
+@keyframes subtlePulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   GRAPH ANIMATIONS
+   ============================================ */
+.chart-line.animate-draw {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+}
+
+.chart-line.animate-draw.is-animated {
+    animation: drawPath 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes drawPath {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.chart-bar.animate-grow {
+    transform-origin: bottom;
+    transform-box: fill-box;
+    transform: scaleY(0);
+}
+
+.chart-bar.animate-grow.is-animated {
+    animation: growBar 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes growBar {
+    to {
+        transform: scaleY(1);
+    }
+}
+
+.chart-bar.is-animated:nth-of-type(1) {
+    animation-delay: 0.1s;
+}
+
+.chart-bar.is-animated:nth-of-type(2) {
+    animation-delay: 0.3s;
+}
+
+.chart-bar.is-animated:nth-of-type(3) {
+    animation-delay: 0.5s;
+}
+
+.chart-bar.is-animated:nth-of-type(4) {
+    animation-delay: 0.7s;
 }

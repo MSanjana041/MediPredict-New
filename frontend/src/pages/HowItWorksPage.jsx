@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClipboardList, Cpu, CalendarCheck, TrendingUp } from 'lucide-react';
 import MainNavbar from '../components/MainNavbar';
@@ -34,6 +34,21 @@ const HowItWorksPage = () => {
         },
     ];
 
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const targets = document.querySelectorAll('.animate-on-scroll, .animate-scale');
+        targets.forEach(el => observer.observe(el));
+
+        return () => targets.forEach(el => observer.unobserve(el));
+    }, []);
+
     return (
         <div className="landing-page">
             <MainNavbar />
@@ -44,7 +59,7 @@ const HowItWorksPage = () => {
 
                     <div className="how-steps">
                         {steps.map((step, index) => (
-                            <div className="step-item" key={index}>
+                            <div className={`step-item animate-on-scroll stagger-delay-${(index % 4) + 1}`} key={index}>
                                 <div className="step-icon-ring">
                                     {step.icon}
                                     <span className="step-number">{step.number}</span>

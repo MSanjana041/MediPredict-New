@@ -1,9 +1,10 @@
 import React, { useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Activity } from 'lucide-react';
 
 const MainNavbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const navLinksRef = useRef(null);
     const highlightRef = useRef(null);
 
@@ -40,11 +41,11 @@ const MainNavbar = () => {
 
                 <div className="nav-links" ref={navLinksRef} onMouseLeave={handleNavLeave}>
                     <div className="nav-highlight" ref={highlightRef}></div>
-                    <a onClick={() => navigate('/')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Home</a>
-                    <a onClick={() => navigate('/features')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Features</a>
-                    <a onClick={() => navigate('/how-it-works')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>How It Works</a>
-                    <a onClick={() => navigate('/reports')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Reports</a>
-                    <a onClick={() => navigate('/about-team')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>About Team</a>
+                    <a className={location.pathname === '/' ? 'active' : ''} onClick={() => navigate('/')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Home</a>
+                    <a className={location.pathname === '/features' ? 'active' : ''} onClick={() => navigate('/features')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Features</a>
+                    <a className={location.pathname === '/how-it-works' ? 'active' : ''} onClick={() => navigate('/how-it-works')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>How It Works</a>
+                    <a className={location.pathname === '/reports' ? 'active' : ''} onClick={() => navigate('/reports')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>Reports</a>
+                    <a className={location.pathname === '/about-team' ? 'active' : ''} onClick={() => navigate('/about-team')} onMouseEnter={handleLinkHover} style={{ cursor: 'pointer' }}>About Team</a>
                 </div>
 
                 <div className="nav-actions">

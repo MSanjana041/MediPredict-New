@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Phone, Github } from 'lucide-react';
 import MainNavbar from '../components/MainNavbar';
@@ -34,6 +34,21 @@ const teamMembers = [
 const AboutTeam = () => {
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const targets = document.querySelectorAll('.animate-on-scroll');
+        targets.forEach(el => observer.observe(el));
+
+        return () => targets.forEach(el => observer.unobserve(el));
+    }, []);
+
     return (
         <div className="about-team-page">
             {/* Navbar */}
@@ -54,7 +69,7 @@ const AboutTeam = () => {
                 {/* Team Cards */}
                 <div className="at-team-grid">
                     {teamMembers.map((member, index) => (
-                        <div className="at-card" key={index}>
+                        <div className={`at-card animate-on-scroll stagger-delay-${(index % 4) + 1}`} key={index}>
                             {/* Avatar */}
                             <div className="at-avatar">{member.initials}</div>
 

@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNavbar from '../components/MainNavbar';
 import './MainPage.css';
 
 const ReportsPage = () => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Also trigger graph animations when the card is visible
+                    const graphs = entry.target.querySelectorAll('.chart-line, .chart-bar');
+                    graphs.forEach(g => g.classList.add('is-animated'));
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const targets = document.querySelectorAll('.animate-on-scroll');
+        targets.forEach(el => observer.observe(el));
+
+        return () => targets.forEach(el => observer.unobserve(el));
+    }, []);
 
     return (
         <div className="landing-page">
@@ -16,7 +34,7 @@ const ReportsPage = () => {
 
                     <div className="reports-grid">
                         {/* Recovery Progress - Line Chart */}
-                        <div className="report-card">
+                        <div className="report-card animate-on-scroll stagger-delay-1">
                             <h3 className="report-card-title">Recovery Progress</h3>
                             <p className="report-card-desc">Player recovery trajectory over 6 weeks</p>
                             <div className="chart-area">
@@ -38,7 +56,7 @@ const ReportsPage = () => {
                                     {/* Line path */}
                                     <polyline
                                         points="75,175 140,148 205,115 270,95 335,60 390,22"
-                                        className="chart-line"
+                                        className="chart-line animate-draw"
                                     />
 
                                     {/* Data points */}
@@ -61,7 +79,7 @@ const ReportsPage = () => {
                         </div>
 
                         {/* Team Availability - Bar Chart */}
-                        <div className="report-card">
+                        <div className="report-card animate-on-scroll stagger-delay-2">
                             <h3 className="report-card-title">Team Availability</h3>
                             <p className="report-card-desc">Current squad status overview</p>
                             <div className="chart-area">
@@ -81,10 +99,10 @@ const ReportsPage = () => {
                                     <line x1="55" y1="197" x2="390" y2="197" className="chart-grid" />
 
                                     {/* Bars */}
-                                    <rect x="80" y="30" width="50" height="167" rx="4" className="chart-bar bar-available" />
-                                    <rect x="165" y="155" width="50" height="42" rx="4" className="chart-bar bar-recovering" />
-                                    <rect x="250" y="165" width="50" height="32" rx="4" className="chart-bar bar-injured" />
-                                    <rect x="335" y="140" width="50" height="57" rx="4" className="chart-bar bar-cleared" />
+                                    <rect x="80" y="30" width="50" height="167" rx="4" className="chart-bar bar-available animate-grow" />
+                                    <rect x="165" y="155" width="50" height="42" rx="4" className="chart-bar bar-recovering animate-grow" />
+                                    <rect x="250" y="165" width="50" height="32" rx="4" className="chart-bar bar-injured animate-grow" />
+                                    <rect x="335" y="140" width="50" height="57" rx="4" className="chart-bar bar-cleared animate-grow" />
 
                                     {/* X-axis labels */}
                                     <text x="85" y="215" className="chart-label">Available</text>
