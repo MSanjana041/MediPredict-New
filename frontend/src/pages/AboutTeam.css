@@ -14,7 +14,7 @@
     padding: 1rem 3rem;
     background: rgba(10, 15, 26, 0.85);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid hsla(160, 84%, 39%, );
+    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -47,8 +47,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.55rem 1.2rem;
-    background: hsla(160, 84%, 39%, );
-    border: 1px solid hsla(160, 84%, 39%, );
+    background: hsla(160, 84%, 39%, 0.1);
+    border: 1px solid hsla(160, 84%, 39%, 0.2);
     border-radius: 8px;
     color: var(--primary);
     font-size: 0.9rem;
@@ -58,8 +58,8 @@
 }
 
 .about-team-page .at-back-btn:hover {
-    background: hsla(160, 84%, 39%, );
-    border-color: hsla(160, 84%, 39%, );
+    background: hsla(160, 84%, 39%, 0.2);
+    border-color: hsla(160, 84%, 39%, 0.4);
     transform: translateX(-3px);
 }
 
@@ -78,7 +78,7 @@
     transform: translateX(-50%);
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, hsla(160, 84%, 39%, ) 0%, transparent 70%);
+    background: radial-gradient(circle, hsla(160, 84%, 39%, 0.1) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -134,14 +134,14 @@
 /* ---- Individual Card ---- */
 .at-card {
     background: rgba(15, 23, 42, 0.7);
-    border: 1px solid hsla(160, 84%, 39%, );
+    border: 1px solid hsla(160, 84%, 39%, 0.2);
     border-radius: 16px;
     padding: 2.5rem 2rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: all 0.35s ease;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -159,9 +159,9 @@
 }
 
 .at-card:hover {
-    transform: translateY(-6px);
-    border-color: hsla(160, 84%, 39%, );
-    box-shadow: 0 12px 40px hsla(160, 84%, 39%, );
+    transform: scale(1.05);
+    border-color: var(--primary);
+    box-shadow: 0 15px 35px hsla(160, 84%, 39%, 0.2);
 }
 
 .at-card:hover::before {
@@ -181,8 +181,9 @@
     font-weight: 800;
     color: #0a0f1a;
     margin-bottom: 1.2rem;
-    box-shadow: 0 4px 20px hsla(160, 84%, 39%, );
+    box-shadow: 0 4px 20px hsla(160, 84%, 39%, 0.3);
     position: relative;
+    transition: transform 0.3s ease;
 }
 
 .at-avatar::after {
@@ -190,7 +191,11 @@
     position: absolute;
     inset: -4px;
     border-radius: 50%;
-    border: 2px solid hsla(160, 84%, 39%, );
+    border: 2px solid hsla(160, 84%, 39%, 0.4);
+}
+
+.at-card:hover .at-avatar {
+    transform: scale(1.1);
 }
 
 /* ---- Card Text ---- */
@@ -242,30 +247,37 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.4rem;
-    background: hsla(160, 84%, 39%, );
-    border: 1px solid hsla(160, 84%, 39%, );
+    background: hsla(160, 84%, 39%, 0.1);
+    border: 1px solid hsla(160, 84%, 39%, 0.3);
     border-radius: 8px;
     color: var(--primary);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
     text-decoration: none;
     margin-top: auto;
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+.at-card:hover .at-github-btn {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .at-github-btn:hover {
-    background: hsla(160, 84%, 39%, );
-    border-color: hsla(160, 84%, 39%, );
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px hsla(160, 84%, 39%, );
+    background: var(--primary);
+    color: hsl(220, 20%, 7%);
+    border-color: var(--primary);
+    box-shadow: 0 4px 15px hsla(160, 84%, 39%, 0.4);
 }
 
 /* ---- Footer ---- */
 .at-footer {
     text-align: center;
     padding: 2rem;
-    border-top: 1px solid hsla(160, 84%, 39%, );
+    border-top: 1px solid var(--border);
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.3);
 }

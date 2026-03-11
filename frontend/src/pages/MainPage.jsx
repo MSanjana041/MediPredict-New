@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainNavbar from '../components/MainNavbar';
 import './MainPage.css';
@@ -8,6 +8,25 @@ import { Activity, ArrowRight, Play, Clock, Brain, LayoutGrid, BarChart3, Clipbo
 const MainPage = () => {
     const navigate = useNavigate();
     const [showLearnMore, setShowLearnMore] = useState(false);
+
+    // Intersection Observer for scroll animations
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // Optional: stop observing once animated
+                    // observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const targets = document.querySelectorAll('.animate-on-scroll, .animate-scale');
+        targets.forEach(el => observer.observe(el));
+
+        return () => targets.forEach(el => observer.unobserve(el));
+    }, []);
+
     return (
         <div className="landing-page">
             <MainNavbar />
@@ -83,22 +102,22 @@ const MainPage = () => {
                     <h2 className="roles-title">Built for Every Role</h2>
 
                     <div className="roles-grid">
-                        <div className="role-card">
-                            <div className="role-icon-wrapper">
+                        <div className="role-card animate-on-scroll stagger-delay-1">
+                            <div className="role-icon-wrapper pulse-icon">
                                 <UserRound size={28} />
                             </div>
                             <h3 className="role-card-title">Player</h3>
                             <p className="role-card-desc">Track your recovery progress and get personalized return-to-play timelines.</p>
                         </div>
-                        <div className="role-card">
-                            <div className="role-icon-wrapper">
+                        <div className="role-card animate-on-scroll stagger-delay-2">
+                            <div className="role-icon-wrapper pulse-icon">
                                 <ShieldCheck size={28} />
                             </div>
                             <h3 className="role-card-title">Coach</h3>
                             <p className="role-card-desc">Monitor team availability and plan training schedules around recovery data.</p>
                         </div>
-                        <div className="role-card">
-                            <div className="role-icon-wrapper">
+                        <div className="role-card animate-on-scroll stagger-delay-3">
+                            <div className="role-icon-wrapper pulse-icon">
                                 <Stethoscope size={28} />
                             </div>
                             <h3 className="role-card-title">Medical Staff</h3>

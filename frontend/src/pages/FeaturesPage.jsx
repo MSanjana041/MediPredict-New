@@ -1,5 +1,5 @@
-import React from 'react';
-// Removed unused useNavigate import
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Clock, Brain, LayoutGrid, BarChart3 } from 'lucide-react';
 import MainNavbar from '../components/MainNavbar';
 import './MainPage.css';
@@ -30,6 +30,21 @@ const FeaturesPage = () => {
         },
     ];
 
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const targets = document.querySelectorAll('.animate-on-scroll, .animate-scale');
+        targets.forEach(el => observer.observe(el));
+
+        return () => targets.forEach(el => observer.unobserve(el));
+    }, []);
+
     return (
         <div className="landing-page">
             <MainNavbar />
@@ -40,8 +55,8 @@ const FeaturesPage = () => {
 
                     <div className="features-grid">
                         {features.map((feature, index) => (
-                            <div className="feature-card" key={index}>
-                                <div className="feature-icon-wrapper">
+                            <div className={`feature-card animate-on-scroll stagger-delay-${(index % 4) + 1}`} key={index}>
+                                <div className="feature-icon-wrapper pulse-icon">
                                     {feature.icon}
                                 </div>
                                 <h3 className="feature-card-title">{feature.title}</h3>
