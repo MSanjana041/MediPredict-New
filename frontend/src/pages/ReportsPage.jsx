@@ -4,7 +4,7 @@ import MainNavbar from '../components/MainNavbar';
 import './MainPage.css';
 
 const ReportsPage = () => {
-    const navigate = useNavigate();
+    // Unused navigate hook removed to pass linting
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {

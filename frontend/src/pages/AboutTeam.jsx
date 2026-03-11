@@ -32,7 +32,7 @@ const teamMembers = [
 ];
 
 const AboutTeam = () => {
-    const navigate = useNavigate();
+    // Unused navigate hook removed to pass linting
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
