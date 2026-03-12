@@ -8,20 +8,26 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Load the model
+# Load the model and columns once at startup
 model_path = 'models/recovery_model.pkl'
 columns_path = 'models/model_columns.pkl'
+
+if os.path.exists(model_path) and os.path.exists(columns_path):
+    model = joblib.load(model_path)
+    model_columns = joblib.load(columns_path)
+    print("✅ ML Model and columns loaded successfully at startup")
+else:
+    model = None
+    model_columns = None
+    print("⚠️ ML Model files not found - predictions will fail")
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         data = request.get_json()
         
-        if not os.path.exists(model_path) or not os.path.exists(columns_path):
-            return jsonify({'error': 'Model not trained yet'}), 500
-            
-        model = joblib.load(model_path)
-        model_columns = joblib.load(columns_path)
+        if model is None or model_columns is None:
+            return jsonify({'error': 'Model not loaded on server'}), 500
         
         # Create a dataframe for the input
         input_data = pd.DataFrame([{
