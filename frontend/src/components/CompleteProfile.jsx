@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useNavigate, Link } from 'react-router-dom';
 import { Activity, ArrowLeft, Save, AlertCircle, Loader2 } from 'lucide-react';
 import './CompleteProfile.css';
@@ -51,7 +52,7 @@ const CompleteProfile = () => {
                 : [];
 
             await axios.post(
-                'http://localhost:5000/api/player-profile',
+                `${API_URL}/api/player-profile`,
                 { ...formData, pastInjuries: injuriesArray },
                 { headers: { Authorization: `Bearer ${user.token}` } }
             );

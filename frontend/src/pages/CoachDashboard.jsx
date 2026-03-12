@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { Activity, LogOut, Users, HeartPulse, TrendingUp, Stethoscope, ChevronRight } from 'lucide-react';
 import coachSilhouette from '../assets/silhouettes/coach-silhouette.png';
 import './CoachDashboard.css';
@@ -44,10 +45,10 @@ const CoachDashboard = () => {
             setLoading(true);
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const [statsRes, playersRes, injuriesRes, tlRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/coach/stats', config),
-                axios.get('http://localhost:5000/api/coach/players', config),
-                axios.get('http://localhost:5000/api/coach/injuries', config),
-                axios.get('http://localhost:5000/api/training-load', config)
+                axios.get(`${API_URL}/api/coach/stats`, config),
+                axios.get(`${API_URL}/api/coach/players`, config),
+                axios.get(`${API_URL}/api/coach/injuries`, config),
+                axios.get(`${API_URL}/api/training-load`, config)
             ]);
             setStats(statsRes.data);
             setPlayers(playersRes.data);
@@ -66,7 +67,7 @@ const CoachDashboard = () => {
     const fetchTrainingLoads = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            let url = 'http://localhost:5000/api/training-load';
+            let url = `${API_URL}/api/training-load`;
             if (tlDateRange.startDate || tlDateRange.endDate) {
                 const params = new URLSearchParams();
                 if (tlDateRange.startDate) params.append('startDate', tlDateRange.startDate);
@@ -83,9 +84,9 @@ const CoachDashboard = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             if (editingTlId) {
-                await axios.put(`http://localhost:5000/api/training-load/${editingTlId}`, tlFormData, config);
+                await axios.put(`${API_URL}/api/training-load/${editingTlId}`, tlFormData, config);
             } else {
-                await axios.post('http://localhost:5000/api/training-load', tlFormData, config);
+                await axios.post(`${API_URL}/api/training-load`, tlFormData, config);
             }
             setTlFormData({ ...tlFormData, duration: '', sleepHours: '', notes: '', fatigueLevel: 5 });
             setEditingTlId(null);
@@ -100,7 +101,7 @@ const CoachDashboard = () => {
         if (!window.confirm('Delete this training record?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/training-load/${id}`, config);
+            await axios.delete(`${API_URL}/api/training-load/${id}`, config);
             fetchTrainingLoads();
         } catch (err) { console.error('Failed to delete training load', err); }
     };

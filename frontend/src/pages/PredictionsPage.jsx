@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { Activity, Clock, TrendingUp, ActivitySquare, AlertCircle, Save, X, Edit, Trash2, Search } from 'lucide-react';
 
 const PredictionsPage = () => {
@@ -37,7 +38,7 @@ const PredictionsPage = () => {
         try {
             const config = getAuthConfig();
             // Uses the medical route to easily fetch all users with the "Player" role
-            const res = await axios.get(`http://localhost:5000/api/medical/players`, config);
+            const res = await axios.get(`${API_URL}/api/medical/players`, config);
             setPlayers(res.data);
 
             // Default select the first player if no form data is set
@@ -53,7 +54,7 @@ const PredictionsPage = () => {
         try {
             const config = getAuthConfig();
             // Fetch the global injuries list
-            const res = await axios.get(`http://localhost:5000/api/medical/injuries`, config);
+            const res = await axios.get(`${API_URL}/api/medical/injuries`, config);
             setInjuries(res.data);
 
             // Default select the first injury
@@ -71,7 +72,7 @@ const PredictionsPage = () => {
             const url = searchTerm
                 ? `/api/predictions?player=${searchTerm}`
                 : `/api/predictions`;
-            const res = await axios.get(`http://localhost:5000${url}`);
+            const res = await axios.get(`${API_URL}${url}`);
             setPredictions(res.data);
         } catch (err) {
             console.error('Error fetching predictions:', err);
@@ -115,11 +116,11 @@ const PredictionsPage = () => {
         try {
             if (editId) {
                 if (!window.confirm('Are you sure you want to update this prediction record?')) return;
-                await axios.put(`http://localhost:5000/api/predictions/${editId}`, formData);
+                await axios.put(`${API_URL}/api/predictions/${editId}`, formData);
             } else {
                 if (!window.confirm('Generate an AI prediction for this player and injury?')) return;
                 setGenerating(true);
-                await axios.post(`http://localhost:5000/api/predictions`, {
+                await axios.post(`${API_URL}/api/predictions`, {
                     player: formData.player,
                     injury: formData.injury
                 });
@@ -149,7 +150,7 @@ const PredictionsPage = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this prediction?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/predictions/${id}`);
+                await axios.delete(`${API_URL}/api/predictions/${id}`);
                 fetchPredictions();
             } catch (err) {
                 console.error('Error deleting prediction:', err);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import {
     Activity, LogOut, User, Shield, Stethoscope, TrendingUp, ChevronRight,
     PlusCircle, Calendar, AlertTriangle, CheckCircle, HeartPulse, X,
@@ -54,8 +55,8 @@ const Dashboard = () => {
 
             // Fetch profile and injuries in parallel
             const [profileRes, injuriesRes] = await Promise.allSettled([
-                axios.get('http://localhost:5000/api/player-profile/me', config),
-                axios.get('http://localhost:5000/api/player-profile/injuries', config)
+                axios.get(`${API_URL}/api/player-profile/me`, config),
+                axios.get(`${API_URL}/api/player-profile/injuries`, config)
             ]);
 
             if (profileRes.status === 'fulfilled') {
@@ -83,7 +84,7 @@ const Dashboard = () => {
             setSubmittingInjury(true);
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const response = await axios.post('http://localhost:5000/api/player-profile/injuries', formData, config);
+            const response = await axios.post(`${API_URL}/api/player-profile/injuries`, formData, config);
 
             // Store the prediction result
             const { injury, prediction, aiPowered } = response.data;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import { useNavigate, Link } from 'react-router-dom';
 import { Activity, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import './Register.css';
@@ -18,7 +19,7 @@ const Register = () => {
     React.useEffect(() => {
         const fetchCoaches = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/users/coaches');
+                const res = await axios.get(`${API_URL}/api/users/coaches`);
                 setCoaches(res.data);
             } catch (err) {
                 console.error('Failed to fetch coaches', err);
@@ -32,7 +33,7 @@ const Register = () => {
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/register', {
+            const response = await axios.post(`${API_URL}/api/auth/register`, {
                 name,
                 email,
                 password,

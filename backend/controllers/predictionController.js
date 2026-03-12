@@ -59,7 +59,8 @@ const createPrediction = async (req, res) => {
 
         try {
             console.log("Calling ML service for prediction...");
-            const mlResponse = await axios.post('http://localhost:5001/predict', {
+            const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
+            const mlResponse = await axios.post(`${ML_SERVICE_URL}/predict`, {
                 age: playerProfile.age,
                 weight: playerProfile.weight,
                 height: playerProfile.height,

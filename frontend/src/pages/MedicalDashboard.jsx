@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../api/config';
 import {
     Activity, LogOut, Stethoscope, HeartPulse,
     ShieldAlert, CheckCircle, PlusCircle, Bot, Search, X
@@ -58,9 +59,9 @@ const MedicalDashboard = () => {
             setLoading(true);
             const config = { headers: { Authorization: `Bearer ${token}` } };
             const [statsRes, injuriesRes, playersRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/medical/stats', config),
-                axios.get('http://localhost:5000/api/medical/injuries', config),
-                axios.get('http://localhost:5000/api/medical/players', config)
+                axios.get(`${API_URL}/api/medical/stats`, config),
+                axios.get(`${API_URL}/api/medical/injuries`, config),
+                axios.get(`${API_URL}/api/medical/players`, config)
             ]);
             setStats(statsRes.data);
             setInjuries(injuriesRes.data);
@@ -87,7 +88,7 @@ const MedicalDashboard = () => {
         try {
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.post('http://localhost:5000/api/medical/injuries', formData, config);
+            await axios.post(`${API_URL}/api/medical/injuries`, formData, config);
             setShowAddModal(false);
             resetForm();
             setError('');
@@ -104,7 +105,7 @@ const MedicalDashboard = () => {
         try {
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.put(`http://localhost:5000/api/medical/injuries/${selectedInjury._id}`, formData, config);
+            await axios.put(`${API_URL}/api/medical/injuries/${selectedInjury._id}`, formData, config);
             setShowEditModal(false);
             setSelectedInjury(null);
             resetForm();
@@ -120,7 +121,7 @@ const MedicalDashboard = () => {
         try {
             const token = user?.token;
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.delete(`http://localhost:5000/api/medical/injuries/${injuryId}`, config);
+            await axios.delete(`${API_URL}/api/medical/injuries/${injuryId}`, config);
             fetchDashboardData(token);
         } catch (err) {
             setError('Failed to delete injury');
