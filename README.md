@@ -2,6 +2,9 @@
 
 An AI-powered sports injury recovery prediction platform that helps athletes, coaches, and medical staff estimate accurate return-to-play timelines using both machine learning models and LLM-powered explanations.
 
+## 🔗 Live Demo
+**[Launch MediPredict App](https://medi-predict-new-roan.vercel.app)**
+
 ## Tech Stack
 - **Frontend**: React.js, Vite
 - **Backend**: Node.js, Express.js
